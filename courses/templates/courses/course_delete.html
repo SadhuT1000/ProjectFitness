@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Удалить курс {{ object.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<header class="container">
+    <h1>Удаление курса</h1>
+    <nav>
+        <a href="{% url 'courses:courses_list' %}">Все курсы</a>
+        <a href="{% url 'courses:course_detail' object.pk %}" class="enroll-btn">Отмена</a>
+    </nav>
+</header>
+
+<div class="container" style="max-width:600px; margin:50px auto; padding:30px; border:1px solid #ddd; border-radius:12px; text-align:center;">
+    <p>Вы действительно хотите удалить курс <strong>{{ object.title }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="enroll-btn" style="background:#f44336;">Удалить</button>
+    </form>
+</div>
+
+</body>
+</html>

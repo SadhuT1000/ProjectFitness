@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} курс</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<header class="container">
+    <h1>{% if form.instance.pk %}Редактирование курса{% else %}Создание нового курса{% endif %}</h1>
+    <nav>
+        <a href="{% url 'courses:courses_list' %}">Все курсы</a>
+    </nav>
+</header>
+
+<div class="container" style="max-width:600px; margin:30px auto; border:1px solid #ddd; padding:30px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="enroll-btn">{% if form.instance.pk %}Сохранить{% else %}Создать{% endif %}</button>
+    </form>
+</div>
+
+</body>
+</html>

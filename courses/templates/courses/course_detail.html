@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<header class="container">
+    <h1>{{ course.title }}</h1>
+    <nav>
+        <a href="{% url 'courses:courses_list' %}">Все курсы</a>
+        <a href="{% url 'courses:courses_update' course.pk %}" class="enroll-btn" style="background:#ff9800;">Редактировать</a>
+        <a href="{% url 'courses:courses_delete' course.pk %}" class="enroll-btn" style="background:#f44336;">Удалить</a>
+    </nav>
+</header>
+
+<div class="container" style="margin:30px auto; max-width:800px; text-align:center;">
+    {% if course.image %}
+        <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width:100%; height:auto; border-radius:12px; margin-bottom:20px;">
+    {% endif %}
+    <p><strong>Описание:</strong> {{ course.description }}</p>
+    <p><strong>Цена:</strong> {{ course.base_price }} ₽</p>
+    <p><strong>Продолжительность:</strong> {{ course.duration_minutes }} минут</p>
+    <p><strong>Оборудование:</strong> {{ course.equipment }}</p>
+    <p><strong>Доступно для дома:</strong> {{ course.is_home|yesno:"Да,Нет" }}</p>
+    <p><strong>Доступно для зала:</strong> {{ course.is_gym|yesno:"Да,Нет" }}</p>
+</div>
+
+</body>
+</html>
