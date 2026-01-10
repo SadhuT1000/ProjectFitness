@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать курс</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Редактировать курс: {{ object.title }}</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Сохранить изменения</button>
+        </form>
+        <a href="{% url 'courses:courses_list' %}">Назад к списку курсов</a>
+    </div>
+</body>
+</html>

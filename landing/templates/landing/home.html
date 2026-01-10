@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Fitness Studio</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/main.js' %}" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header>
+    <div class="container">
+        <h1>Fitness Studio</h1>
+        <nav>
+            <a href="{% url 'landing:home' %}">Главная</a>
+            <a href="{% url 'landing:privacy' %}">Политика конфиденциальности</a>
+            <a href="{% url 'landing:terms' %}">Пользовательское соглашение</a>
+            <a href="{% url 'courses:courses_list' %}">Все курсы</a>
+            <a href="{% url 'courses:courses_create' %}">Добавить курс</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ===== Hero / Баннер ===== -->
+<section class="hero" style="background: linear-gradient(90deg,#1a73e8,#2ec4b6); color:white; padding:80px 20px; text-align:center;">
+    <h2>Тренируйся дома и в зале</h2>
+    <p>Выбери курс и начинай трансформацию уже сегодня</p>
+
+    <a href="{% url 'courses:courses_list' %}" class="enroll-btn">Смотреть курсы</a>
+</section>
+
+<!-- ===== Преимущества ===== -->
+<section class="features container" style="margin:50px auto; max-width:1200px; display:flex; gap:20px; flex-wrap:wrap;">
+    <div class="feature-card fade-in">
+        <h3>Эффективные тренировки</h3>
+        <p>Разработано профессиональными тренерами, подходит для любого уровня.</p>
+    </div>
+    <div class="feature-card fade-in">
+        <h3>Для дома и зала</h3>
+        <p>Все упражнения можно выполнять дома или в зале с минимальным оборудованием.</p>
+    </div>
+    <div class="feature-card fade-in">
+        <h3>Прогресс наглядно</h3>
+        <p>Следи за своим прогрессом и достигай целей быстрее.</p>
+    </div>
+</section>
+
+<!-- ===== Главная картинка ===== -->
+<div class="container" style="text-align:center; margin:50px 0;">
+    <img src="{{ media_url }}landing/v2.jpg"
+         alt="Главная картинка"
+         style="width:60%; max-height:900px; height:70%; border-radius:12px; display:block; margin:0 auto;">
+</div>
+
+<!-- ===== Курсы ===== -->
+<section id="courses" class="courses-container container" style="margin:50px auto; max-width:1200px; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+    {% for course in courses %}
+    <div class="course-card fade-in" style="border:1px solid #ddd; border-radius:8px; overflow:hidden;">
+        {% if course.image %}
+            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-img" style="width:100%; height:200px; object-fit:cover;">
+        {% else %}
+            <img src="{% static 'images/course_placeholder.jpg' %}" alt="{{ course.title }}" class="course-img" style="width:100%; height:200px; object-fit:cover;">
+        {% endif %}
+        <div class="course-info" style="padding:15px;">
+            <h2 class="course-title">{{ course.title }}</h2>
+            <p class="course-desc">{{ course.description|truncatechars:120 }}</p>
+            <p class="course-price">{{ course.base_price }} ₽</p>
+
+            {% if course.streams.all %}
+                <ul>
+                    {% for stream in course.streams.all %}
+                        {% if stream.status == 'open' %}
+                            <li>{{ stream.title }}: {{ stream.start_date }} – {{ stream.end_date }} ({{ stream.price }} ₽)</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <!-- Ссылки на CRUD -->
+            <div style="margin-top:10px;">
+                <a href="{% url 'courses:course_detail' course.pk %}" style="margin-right:10px;">Просмотр</a>
+                <a href="{% url 'courses:courses_update' course.pk %}" style="margin-right:10px;">Редактировать</a>
+                <a href="{% url 'courses:courses_delete' course.pk %}">Удалить</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+
+<!-- ===== Кнопка Добавить курс ===== -->
+<div style="text-align:center; margin:40px 0;">
+    <a href="{% url 'courses:courses_create' %}" class="enroll-btn" style="padding:10px 20px;">Добавить новый курс</a>
+</div>
+
+<!-- ===== Видео блок (пример) ===== -->
+<section class="videos container fade-in" style="margin:50px auto; max-width:1200px;">
+    <h2>Попробуй тренировку прямо сейчас</h2>
+    <div class="video-card fade-in" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="Видеотренировка"
+            frameborder="0"
+            allowfullscreen
+            style="position:absolute; top:0; left:0; width:100%; height:100%;">
+        </iframe>
+    </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer style="background-color:#222; color:white; padding:40px 20px; text-align:center;">
+    <p>&copy; 2026 Fitness Studio</p>
+    <a href="{% url 'landing:privacy' %}" style="color:#2ec4b6;">Политика конфиденциальности</a> |
+    <a href="{% url 'landing:terms' %}" style="color:#2ec4b6;">Пользовательское соглашение</a>
+</footer>
+
+</body>
+</html>
