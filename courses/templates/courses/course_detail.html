@@ -1,33 +1,104 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ course.title }}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
 
-<header class="container">
-    <h1>{{ course.title }}</h1>
-    <nav>
-        <a href="{% url 'courses:courses_list' %}">Все курсы</a>
-        <a href="{% url 'courses:courses_update' course.pk %}" class="enroll-btn" style="background:#ff9800;">Редактировать</a>
-        <a href="{% url 'courses:courses_delete' course.pk %}" class="enroll-btn" style="background:#f44336;">Удалить</a>
-    </nav>
-</header>
+{% block title %}{{ course.title }}{% endblock %}
 
-<div class="container" style="margin:30px auto; max-width:800px; text-align:center;">
-    {% if course.image %}
-        <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width:100%; height:auto; border-radius:12px; margin-bottom:20px;">
-    {% endif %}
-    <p><strong>Описание:</strong> {{ course.description }}</p>
-    <p><strong>Цена:</strong> {{ course.base_price }} ₽</p>
-    <p><strong>Продолжительность:</strong> {{ course.duration_minutes }} минут</p>
-    <p><strong>Оборудование:</strong> {{ course.equipment }}</p>
-    <p><strong>Доступно для дома:</strong> {{ course.is_home|yesno:"Да,Нет" }}</p>
-    <p><strong>Доступно для зала:</strong> {{ course.is_gym|yesno:"Да,Нет" }}</p>
+{% block content %}
+<div class="container" style="max-width:900px; margin:40px auto; padding:0 20px;">
+
+    <!-- Обложка и основная инфо -->
+    <div style="display:flex; gap:40px; flex-wrap:wrap; margin-bottom:40px;">
+        {% if course.image %}
+            <img src="{{ course.image.url }}" alt="{{ course.title }}"
+                 style="width:100%; max-width:400px; border-radius:12px; object-fit:cover;">
+        {% endif %}
+        <div style="flex:1; min-width:250px;">
+            <h1>{{ course.title }}</h1>
+            <p>{{ course.description }}</p>
+            <p><strong>Продолжительность:</strong> {{ course.duration_minutes }} минут</p>
+            <p><strong>Оборудование:</strong> {{ course.equipment }}</p>
+            <p><strong>Для дома:</strong> {{ course.is_home|yesno:"Да,Нет" }}</p>
+            <p><strong>Для зала:</strong> {{ course.is_gym|yesno:"Да,Нет" }}</p>
+            <p style="font-size:1.4rem; font-weight:700; color:#ff4c00;">{{ course.base_price }} ₽</p>
+
+            {% if has_access %}
+                <div style="background:#e6f4ea; padding:12px 16px; border-radius:8px; margin-bottom:16px;">
+                    ✅ У вас есть доступ к этому курсу
+                </div>
+            {% else %}
+                {% if open_streams %}
+                    <div style="margin-bottom:16px;">
+                        <h3>Открытые потоки:</h3>
+                        {% for stream in open_streams %}
+                            <div style="border:1px solid #eee; border-radius:8px; padding:12px; margin-bottom:10px;">
+                                <strong>{{ stream.title }}</strong><br>
+                                {{ stream.start_date|date:"d.m.Y" }} — {{ stream.end_date|date:"d.m.Y" }}<br>
+                                <span style="color:#ff4c00; font-weight:700;">{{ stream.price }} ₽</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a href="#" class="enroll-btn" style="display:inline-block; padding:12px 30px; text-decoration:none;">
+                        Купить курс
+                    </a>
+                {% else %}
+                    <div style="background:#fff3e0; padding:12px 16px; border-radius:8px;">
+                        Набор на курс закрыт. Следите за новыми потоками.
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Ссылки редактирования (можно потом скрыть для обычных юзеров) -->
+     {% if user.is_staff %}
+<div style="margin-top:20px; display:flex; gap:10px;">
+    <a href="{% url 'courses:courses_update' course.pk %}"
+       class="btn" style="background:#ff9800; color:white; padding:8px 16px; border-radius:6px;">
+        Редактировать
+    </a>
+    <a href="{% url 'courses:courses_delete' course.pk %}"
+       class="btn" style="background:#f44336; color:white; padding:8px 16px; border-radius:6px;">
+        Удалить
+    </a>
 </div>
+{% endif %}
+        </div>
+    </div>
 
-</body>
-</html>
+    <!-- Список уроков -->
+    <section>
+        <h2>Программа курса</h2>
+        {% if lessons %}
+            {% regroup lessons by week_number as weeks %}
+            {% for week in weeks %}
+                <div style="margin-bottom:30px;">
+                    <h3 style="color:#ff4c00;">Неделя {{ week.grouper }}</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        {% for lesson in week.list %}
+                            <div style="border:1px solid #eee; border-radius:8px; padding:14px; display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <strong>{{ forloop.counter }}. {{ lesson.title }}</strong>
+                                    {% if lesson.is_free_preview %}
+                                        <span style="background:#e3f2fd; color:#1a73e8; font-size:12px; padding:2px 8px; border-radius:10px; margin-left:8px;">
+                                            Бесплатно
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                {% if has_access or lesson.is_free_preview %}
+                                    <a href="{% url 'courses:lesson_detail' course.pk lesson.pk %}"
+                                       class="btn btn--primary" style="padding:6px 16px; font-size:14px;">
+                                        Смотреть
+                                    </a>
+                                {% else %}
+                                    <span style="color:#bbb; font-size:14px;">🔒 Закрыт</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color:#888;">Уроки пока не добавлены.</p>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}

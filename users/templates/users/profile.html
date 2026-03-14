@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+
+  <!-- Шапка профиля -->
+  <div class="profile-header">
+    <div class="profile-avatar">
+      {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="Аватар">
+      {% else %}
+        <div class="avatar-placeholder">
+          {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+        </div>
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+      <p class="profile-email">{{ user.email }}</p>
+      {% if user.phone_number %}
+        <p class="profile-phone">{{ user.phone_number }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Мои курсы -->
+  <section class="profile-courses">
+    <h2>Мои курсы</h2>
+
+    {% if enrollments_with_progress %}
+      <div class="profile-course-cards">
+        {% for item in enrollments_with_progress %}
+          <div class="profile-course-card {% if not item.stream_active %}profile-course-card--expired{% endif %}">
+
+            {% if item.course.image %}
+              <img class="profile-course-card__image" src="{{ item.course.image.url }}" alt="{{ item.course.title }}">
+            {% endif %}
+
+            <div class="profile-course-card__body">
+              <h3>{{ item.course.title }}</h3>
+              <p class="stream-title">{{ item.stream.title }}</p>
+
+              <!-- Статус потока -->
+              {% if item.stream_active %}
+                <span class="badge badge--active">Активен до {{ item.stream.end_date|date:"d.m.Y" }}</span>
+              {% else %}
+                <span class="badge badge--expired">Завершён {{ item.stream.end_date|date:"d.m.Y" }}</span>
+              {% endif %}
+
+              <!-- Прогресс -->
+              <div class="progress-block">
+                <div class="progress-bar">
+                  <div class="progress-bar__fill" style="width: {{ item.percent }}%"></div>
+                </div>
+                <p class="progress-text">
+                  {{ item.completed_lessons }} из {{ item.total_lessons }} уроков пройдено ({{ item.percent }}%)
+                </p>
+              </div>
+
+              {% if item.stream_active %}
+                <a href="{% url 'courses:course_detail' item.course.pk %}" class="btn btn--primary">
+                  Перейти к урокам
+                </a>
+              {% endif %}
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <p>У вас пока нет активных курсов.</p>
+        <a href="{% url 'landing:home' %}" class="btn btn--primary">Выбрать курс</a>
+      </div>
+    {% endif %}
+
+  </section>
+
+</div>
+{% endblock %}

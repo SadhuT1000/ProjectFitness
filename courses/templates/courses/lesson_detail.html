@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:1100px; margin:40px auto; padding:0 20px; display:flex; gap:30px; flex-wrap:wrap;">
+
+    <!-- Основной контент — видео -->
+    <div style="flex:2; min-width:300px;">
+        <p style="color:#888; margin-bottom:8px;">
+            <a href="{% url 'courses:course_detail' course.pk %}">{{ course.title }}</a>
+            → Неделя {{ lesson.week_number }}
+        </p>
+        <h1 style="margin-bottom:20px;">{{ lesson.title }}</h1>
+
+        <!-- Видео -->
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; background:#000; margin-bottom:24px;">
+            <iframe src="{{ lesson.video_url }}"
+                    title="{{ lesson.title }}"
+                    frameborder="0"
+                    allowfullscreen
+                    style="position:absolute; top:0; left:0; width:100%; height:100%;">
+            </iframe>
+        </div>
+
+        <!-- Прогресс по курсу -->
+        <div style="margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="font-size:14px; color:#666;">Прогресс курса</span>
+                <span style="font-size:14px; color:#666;">{{ completed_lessons }}/{{ total_lessons }} уроков ({{ percent }}%)</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar__fill" style="width:{{ percent }}%;"></div>
+            </div>
+        </div>
+
+        <!-- Кнопка "Урок пройден" -->
+        {% if not progress.is_completed %}
+            <form method="post" action="{% url 'courses:lesson_complete' course.pk lesson.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="enroll-btn" style="padding:12px 30px;">
+                    ✅ Отметить как пройденный
+                </button>
+            </form>
+        {% else %}
+            <div style="background:#e6f4ea; padding:12px 16px; border-radius:8px; display:inline-block;">
+                ✅ Урок пройден — {{ progress.completed_at|date:"d.m.Y" }}
+            </div>
+        {% endif %}
+
+        <!-- Навигация между уроками -->
+        <div style="display:flex; justify-content:space-between; margin-top:30px;">
+            {% if prev_lesson %}
+                <a href="{% url 'courses:lesson_detail' course.pk prev_lesson.pk %}"
+                   class="btn btn--primary">
+                    ← {{ prev_lesson.title }}
+                </a>
+            {% else %}
+                <span></span>
+            {% endif %}
+
+            {% if next_lesson %}
+                <a href="{% url 'courses:lesson_detail' course.pk next_lesson.pk %}"
+                   class="btn btn--primary">
+                    {{ next_lesson.title }} →
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Боковая панель — список уроков -->
+    <div style="flex:1; min-width:250px;">
+        <h3 style="margin-bottom:16px;">Уроки курса</h3>
+        {% regroup all_lessons by week_number as weeks %}
+        {% for week in weeks %}
+            <div style="margin-bottom:20px;">
+                <p style="font-weight:700; color:#ff4c00; margin-bottom:8px;">Неделя {{ week.grouper }}</p>
+                {% for l in week.list %}
+                    <a href="{% url 'courses:lesson_detail' course.pk l.pk %}"
+                       style="display:block; padding:10px 12px; border-radius:8px; margin-bottom:6px; font-size:14px;
+                              background:{% if l.pk == lesson.pk %}#ff4c00{% else %}#f5f5f5{% endif %};
+                              color:{% if l.pk == lesson.pk %}white{% else %}#333{% endif %};
+                              text-decoration:none;">
+                        {{ forloop.counter }}. {{ l.title }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
