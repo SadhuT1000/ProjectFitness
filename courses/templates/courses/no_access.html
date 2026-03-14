@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Доступ закрыт{% endblock %}
+
+{% block content %}
+<div style="max-width:600px; margin:80px auto; padding:0 20px; text-align:center;">
+
+    <div style="font-size:64px; margin-bottom:20px;">🔒</div>
+    <h1>Доступ закрыт</h1>
+    <p style="color:#666; margin-bottom:30px;">
+        Чтобы смотреть уроки, необходимо приобрести курс.
+    </p>
+
+    {% if open_streams %}
+        <h3>Открытые потоки:</h3>
+        {% for stream in open_streams %}
+            <div style="border:1px solid #eee; border-radius:8px; padding:16px; margin-bottom:12px; text-align:left;">
+                <strong>{{ stream.title }}</strong><br>
+                {{ stream.start_date|date:"d.m.Y" }} — {{ stream.end_date|date:"d.m.Y" }}<br>
+                <span style="color:#ff4c00; font-weight:700;">{{ stream.price }} ₽</span>
+            </div>
+        {% endfor %}
+        <a href="#" class="enroll-btn" style="display:inline-block; padding:12px 30px; margin-top:10px; text-decoration:none;">
+            Купить курс
+        </a>
+    {% else %}
+        <p style="color:#888;">Набор на курс сейчас закрыт.</p>
+    {% endif %}
+
+    <div style="margin-top:20px;">
+        <a href="{% url 'courses:course_detail' course.pk %}" style="color:#1a73e8;">
+            ← Вернуться к курсу
+        </a>
+    </div>
+
+</div>
+{% endblock %}

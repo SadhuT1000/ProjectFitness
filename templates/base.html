@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Fitness Studio{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/main.js' %}" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        nav.nav-menu { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+        .nav-links { display:flex; gap:20px; flex-wrap:wrap; }
+        .nav-links a { text-decoration:none; color:#333; font-weight:500; padding:8px 12px; border-radius:6px; transition:all 0.3s ease; }
+        .nav-links a:hover { background-color:#f0f0f0; color:#1a73e8; }
+        .user-actions { display:flex; align-items:center; gap:10px; }
+        .nav-link { text-decoration:none; color:#1a73e8; font-weight:600; padding:8px 16px; border-radius:6px; transition:all 0.3s ease; }
+        .nav-link:hover { background-color:#e3f2fd; }
+        .nav-register { background:linear-gradient(90deg,#1a73e8,#2ec4b6); color:white !important; padding:10px 20px; font-weight:600; border-radius:25px; text-decoration:none; }
+        .nav-register:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(26,115,232,0.3); }
+        .logout-form { display:inline-flex; margin:0; }
+        .nav-logout { background:#ff4757; color:white; border:none; padding:10px 16px; border-radius:6px; font-weight:600; cursor:pointer; transition:all 0.3s ease; font-size:14px; }
+        .nav-logout:hover { background:#ff3838; transform:translateY(-1px); box-shadow:0 4px 12px rgba(255,71,87,0.4); }
+        @media (max-width:768px) {
+            .nav-menu { flex-direction:column; gap:15px; }
+            .nav-links { justify-content:center; }
+            .user-actions { flex-direction:column; width:100%; }
+            .nav-register, .nav-logout { width:100%; text-align:center; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Fitness Studio</h1>
+        <nav class="nav-menu">
+            <div class="nav-links">
+                <a href="{% url 'landing:home' %}">Главная</a>
+                <a href="{% url 'courses:courses_list' %}">Все курсы</a>
+                <a href="{% url 'landing:privacy' %}">Политика</a>
+                <a href="{% url 'landing:terms' %}">Соглашение</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'courses:courses_create' %}" style="color:#ff4c00;">+ Добавить курс</a>
+                {% endif %}
+            </div>
+            <div class="user-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'users:profile' %}" class="nav-link">Личный кабинет</a>
+                    <form method="post" action="{% url 'users:logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-logout">Выйти</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="nav-link">Вход</a>
+                    <a href="{% url 'users:register' %}" class="nav-register">Регистрация</a>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+</header>
+
+{% block content %}{% endblock %}
+
+<footer style="background-color:#222; color:white; padding:40px 20px; text-align:center;">
+    <p>&copy; 2026 Fitness Studio</p>
+    <a href="{% url 'landing:privacy' %}" style="color:#2ec4b6;">Политика конфиденциальности</a> |
+    <a href="{% url 'landing:terms' %}" style="color:#2ec4b6;">Пользовательское соглашение</a>
+</footer>
+
+</body>
+</html>
