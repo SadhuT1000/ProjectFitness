@@ -471,3 +471,36 @@ nav.nav-menu {
     padding: 60px 20px;
     color: var(--color-text-muted);
 }
+
+/* ===== Forms ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Inter', Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-accent-rose);
+}
+
+input[type="file"] {
+    font-size: 13px;
+    color: var(--color-text-muted);
+}

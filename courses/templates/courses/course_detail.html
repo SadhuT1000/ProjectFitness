@@ -19,7 +19,7 @@
             <p><strong>Оборудование:</strong> {{ course.equipment }}</p>
             <p><strong>Для дома:</strong> {{ course.is_home|yesno:"Да,Нет" }}</p>
             <p><strong>Для зала:</strong> {{ course.is_gym|yesno:"Да,Нет" }}</p>
-            <p style="font-size:1.4rem; font-weight:700; color:#ff4c00;">{{ course.base_price }} ₽</p>
+            <p style="font-size:1.4rem; font-weight:700; color:var(--color-accent);">{{ course.base_price }} ₽</p>
 
             {% if has_access %}
                 <div style="background:#e6f4ea; padding:12px 16px; border-radius:8px; margin-bottom:16px;">
@@ -27,19 +27,22 @@
                 </div>
             {% else %}
                 {% if open_streams %}
-                    <div style="margin-bottom:16px;">
-                        <h3>Открытые потоки:</h3>
-                        {% for stream in open_streams %}
-                            <div style="border:1px solid #eee; border-radius:8px; padding:12px; margin-bottom:10px;">
-                                <strong>{{ stream.title }}</strong><br>
-                                {{ stream.start_date|date:"d.m.Y" }} — {{ stream.end_date|date:"d.m.Y" }}<br>
-                                <span style="color:#ff4c00; font-weight:700;">{{ stream.price }} ₽</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <a href="#" class="enroll-btn" style="display:inline-block; padding:12px 30px; text-decoration:none;">
-                        Купить курс
-                    </a>
+                    <h3 style="color:var(--color-primary);">Открытые потоки:</h3>
+                    {% for stream in open_streams %}
+                        <div style="border:1px solid var(--color-border); border-radius:12px; padding:16px; margin-bottom:12px;">
+                            <strong>{{ stream.title }}</strong><br>
+                            <span style="color:var(--color-text-muted); font-size:14px;">
+                                {{ stream.start_date|date:"d.m.Y" }} — {{ stream.end_date|date:"d.m.Y" }}
+                            </span><br>
+                            <span style="color:var(--color-accent); font-weight:700; font-size:1.1rem;">
+                                {{ stream.price }} ₽
+                            </span><br>
+                            <a href="{% url 'courses:payment' stream.pk %}" class="enroll-btn"
+                               style="display:inline-block; padding:10px 24px; margin-top:12px; text-decoration:none;">
+                                Купить курс
+                            </a>
+                        </div>
+                    {% endfor %}
                 {% else %}
                     <div style="background:#fff3e0; padding:12px 16px; border-radius:8px;">
                         Набор на курс закрыт. Следите за новыми потоками.
@@ -47,33 +50,32 @@
                 {% endif %}
             {% endif %}
 
-            <!-- Ссылки редактирования (можно потом скрыть для обычных юзеров) -->
-     {% if user.is_staff %}
-<div style="margin-top:20px; display:flex; gap:10px;">
-    <a href="{% url 'courses:courses_update' course.pk %}"
-       class="btn" style="background:#ff9800; color:white; padding:8px 16px; border-radius:6px;">
-        Редактировать
-    </a>
-    <a href="{% url 'courses:courses_delete' course.pk %}"
-       class="btn" style="background:#f44336; color:white; padding:8px 16px; border-radius:6px;">
-        Удалить
-    </a>
-</div>
-{% endif %}
+            {% if user.is_staff %}
+            <div style="margin-top:20px; display:flex; gap:10px;">
+                <a href="{% url 'courses:courses_update' course.pk %}"
+                   class="btn" style="background:#ff9800; color:white; padding:8px 16px; border-radius:6px;">
+                    Редактировать
+                </a>
+                <a href="{% url 'courses:courses_delete' course.pk %}"
+                   class="btn" style="background:#f44336; color:white; padding:8px 16px; border-radius:6px;">
+                    Удалить
+                </a>
+            </div>
+            {% endif %}
         </div>
     </div>
 
     <!-- Список уроков -->
     <section>
-        <h2>Программа курса</h2>
+        <h2 style="color:var(--color-primary);">Программа курса</h2>
         {% if lessons %}
             {% regroup lessons by week_number as weeks %}
             {% for week in weeks %}
                 <div style="margin-bottom:30px;">
-                    <h3 style="color:#ff4c00;">Неделя {{ week.grouper }}</h3>
+                    <h3 style="color:var(--color-accent-rose);">Неделя {{ week.grouper }}</h3>
                     <div style="display:flex; flex-direction:column; gap:10px;">
                         {% for lesson in week.list %}
-                            <div style="border:1px solid #eee; border-radius:8px; padding:14px; display:flex; justify-content:space-between; align-items:center;">
+                            <div style="border:1px solid var(--color-border); border-radius:8px; padding:14px; display:flex; justify-content:space-between; align-items:center; background:var(--color-surface);">
                                 <div>
                                     <strong>{{ forloop.counter }}. {{ lesson.title }}</strong>
                                     {% if lesson.is_free_preview %}
@@ -96,7 +98,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p style="color:#888;">Уроки пока не добавлены.</p>
+            <p style="color:var(--color-text-muted);">Уроки пока не добавлены.</p>
         {% endif %}
     </section>
 
