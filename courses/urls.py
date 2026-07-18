@@ -4,8 +4,9 @@ from django.conf.urls.static import static
 from .views import (
     CourseCreateView, CourseDeleteView,
     CourseDetailView, CourseListView, CourseUpdateView,
-    lesson_detail, mark_lesson_complete
+    lesson_detail, mark_lesson_complete, payment_page
 )
+
 
 app_name = "courses"
 
@@ -15,6 +16,9 @@ urlpatterns = [
     path("courses/<int:pk>/", CourseDetailView.as_view(), name="course_detail"),
     path("courses/update/<int:pk>/", CourseUpdateView.as_view(), name="courses_update"),
     path("courses/delete/<int:pk>/", CourseDeleteView.as_view(), name="courses_delete"),
+
+    # Оплата
+    path("pay/<int:stream_pk>/", payment_page, name="payment"),
 
     # Уроки
     path("courses/<int:course_pk>/lessons/<int:lesson_pk>/", lesson_detail, name="lesson_detail"),

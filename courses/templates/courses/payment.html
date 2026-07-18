@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата — {{ course.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:600px; margin:60px auto; padding:0 20px;">
+
+    <!-- Заголовок -->
+    <div style="text-align:center; margin-bottom:40px;">
+        <h1 style="color:var(--color-primary); margin-bottom:8px;">Оплата курса</h1>
+        <p style="color:var(--color-text-muted); font-size:1.1rem;">{{ course.title }} — {{ stream.title }}</p>
+    </div>
+
+    <!-- Карточка с суммой -->
+    <div style="background:var(--color-surface); border:1px solid var(--color-border);
+                border-radius:16px; padding:24px; margin-bottom:24px; text-align:center;">
+        <p style="color:var(--color-text-muted); margin:0 0 8px;">Сумма к оплате</p>
+        <p style="font-size:2.4rem; font-weight:700; color:var(--color-primary); margin:0;">
+            {{ stream.price }} ₽
+        </p>
+    </div>
+
+    <!-- Инструкция -->
+    <div style="background:var(--color-surface); border:1px solid var(--color-border);
+                border-radius:16px; padding:28px; margin-bottom:24px;">
+
+        <h2 style="color:var(--color-primary); margin:0 0 20px; font-size:1.2rem;">
+            Как оплатить через СБП
+        </h2>
+
+        <!-- Шаг 1 -->
+        <div style="display:flex; gap:16px; margin-bottom:20px; align-items:flex-start;">
+            <div style="min-width:36px; height:36px; background:var(--color-accent-rose);
+                        border-radius:50%; display:flex; align-items:center; justify-content:center;
+                        font-weight:700; color:var(--color-primary); font-size:14px;">1</div>
+            <div>
+                <p style="margin:0 0 4px; font-weight:600; color:var(--color-primary);">Открой приложение Тинькофф</p>
+                <p style="margin:0; color:var(--color-text-muted); font-size:14px;">
+                    Переводы → По номеру телефона → СБП
+                </p>
+            </div>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div style="display:flex; gap:16px; margin-bottom:20px; align-items:flex-start;">
+            <div style="min-width:36px; height:36px; background:var(--color-accent-rose);
+                        border-radius:50%; display:flex; align-items:center; justify-content:center;
+                        font-weight:700; color:var(--color-primary); font-size:14px;">2</div>
+            <div>
+                <p style="margin:0 0 8px; font-weight:600; color:var(--color-primary);">Переведи на номер</p>
+                <div style="background:var(--color-bg); border:1px solid var(--color-border);
+                            border-radius:10px; padding:12px 16px; display:flex;
+                            justify-content:space-between; align-items:center;">
+                    <span style="font-size:1.3rem; font-weight:700; color:var(--color-primary);
+                                 letter-spacing:1px;">+7 913 460 28 00</span>
+                    <button onclick="navigator.clipboard.writeText('+79134602800');this.innerText='Скопировано ✓'"
+                            style="background:var(--color-accent-rose); border:none; border-radius:8px;
+                                   padding:6px 12px; font-size:13px; font-weight:600;
+                                   cursor:pointer; color:var(--color-primary);">
+                        Скопировать
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div style="display:flex; gap:16px; margin-bottom:20px; align-items:flex-start;">
+            <div style="min-width:36px; height:36px; background:var(--color-accent-rose);
+                        border-radius:50%; display:flex; align-items:center; justify-content:center;
+                        font-weight:700; color:var(--color-primary); font-size:14px;">3</div>
+            <div>
+                <p style="margin:0 0 4px; font-weight:600; color:var(--color-primary);">В комментарии укажи свой email</p>
+                <p style="margin:0; color:var(--color-text-muted); font-size:14px;">
+                    {% if user.is_authenticated %}
+                        Твой email: <strong>{{ user.email }}</strong>
+                    {% else %}
+                        Чтобы мы знали кому открыть доступ
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Шаг 4 -->
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+            <div style="min-width:36px; height:36px; background:var(--color-accent-rose);
+                        border-radius:50%; display:flex; align-items:center; justify-content:center;
+                        font-weight:700; color:var(--color-primary); font-size:14px;">4</div>
+            <div>
+                <p style="margin:0 0 4px; font-weight:600; color:var(--color-primary);">Получи доступ в течение 2 часов</p>
+                <p style="margin:0; color:var(--color-text-muted); font-size:14px;">
+                    После подтверждения оплаты мы откроем доступ к курсу
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Важно -->
+    <div style="background:#fff8f0; border:1px solid #f0d9c0; border-radius:12px;
+                padding:16px 20px; margin-bottom:24px;">
+        <p style="margin:0; font-size:14px; color:var(--color-primary);">
+            ⚠️ <strong>Важно:</strong> обязательно укажи свой email в комментарии к переводу —
+            без этого мы не сможем открыть тебе доступ.
+        </p>
+    </div>
+
+    <!-- Кнопки -->
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="{% url 'courses:course_detail' course.pk %}"
+           style="color:var(--color-text-muted); font-size:14px; padding:10px 0;">
+            ← Вернуться к курсу
+        </a>
+    </div>
+
+</div>
+{% endblock %}

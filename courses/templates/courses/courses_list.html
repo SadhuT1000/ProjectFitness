@@ -1,58 +1,49 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Список курсов</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/main.js' %}" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
 
-<!-- ===== Header ===== -->
-<header class="container" style="display:flex; justify-content:space-between; align-items:center; padding:20px 0;">
-    <h1>Все курсы</h1>
-    <nav>
-        <a href="{% url 'landing:home' %}" style="margin-right:15px;">Главная</a>
-        <a href="{% url 'courses:courses_create' %}" class="enroll-btn" style="padding:8px 15px;">Добавить курс</a>
-    </nav>
-</header>
+{% block title %}Все курсы{% endblock %}
 
-<!-- ===== Курсы ===== -->
-<section class="courses-container container" style="margin:50px auto; max-width:1200px; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px;">
-    {% for course in courses %}
-    <div class="course-card fade-in" style="border:1px solid #ddd; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1); display:flex; flex-direction:column;">
-    <!-- Картинка -->
-    {% if course.image %}
-        <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width:100%; height:220px; object-fit:cover; display:block;">
-    {% else %}
-        <img src="{% static 'images/course_placeholder.jpg' %}" alt="{{ course.title }}" style="width:100%; height:220px; object-fit:cover; display:block;">
-    {% endif %}
+{% block content %}
 
-    <!-- Текст под картинкой -->
-    <div style="padding:30px; flex:1; display:flex; flex-direction:column; gap:10px;">
-        <h2 style="margin:0; font-size:1.2rem; color:#333;">{{ course.title }}</h2>
-        <p style="margin:0; font-size:0.95rem; color:#555;">{{ course.description|truncatechars:150 }}</p>
-        <p style="margin:5px 0 0 0; font-weight:600;">{{ course.base_price }} ₽</p>
+<section style="max-width:1200px; margin:50px auto; padding:0 20px;">
+    <h2 style="color:var(--color-primary); margin-bottom:30px;">Все курсы</h2>
 
-        <!-- Кнопки в колонку -->
-        <div style="margin-top:auto; display:flex; flex-direction:column; gap:5px;">
-            <a href="{% url 'courses:course_detail' course.pk %}" class="enroll-btn" style="width:100%; text-align:center;">Подробнее</a>
-            <a href="{% url 'courses:courses_update' course.pk %}" class="enroll-btn" style="width:100%; text-align:center; background:#ff9800;">Редактировать</a>
-            <a href="{% url 'courses:courses_delete' course.pk %}" class="enroll-btn" style="width:100%; text-align:center; background:#f44336;">Удалить</a>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px;">
+        {% for course in courses %}
+        <div class="course-card fade-in">
+            {% if course.image %}
+                <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-img">
+            {% else %}
+                <img src="{% static 'images/course_placeholder.jpg' %}" alt="{{ course.title }}" class="course-img">
+            {% endif %}
+
+            <div class="course-info">
+                <h2 class="course-title">{{ course.title }}</h2>
+                <p class="course-desc">{{ course.description|truncatechars:150 }}</p>
+                <p class="course-price">{{ course.base_price }} ₽</p>
+
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:auto;">
+                    <a href="{% url 'courses:course_detail' course.pk %}" class="enroll-btn"
+                       style="text-align:center;">Подробнее</a>
+                    {% if user.is_staff %}
+                        <a href="{% url 'courses:courses_update' course.pk %}"
+                           style="text-align:center; padding:8px; border-radius:8px;
+                                  background:#ff9800; color:white; font-weight:600;">
+                            Редактировать
+                        </a>
+                        <a href="{% url 'courses:courses_delete' course.pk %}"
+                           style="text-align:center; padding:8px; border-radius:8px;
+                                  background:#f44336; color:white; font-weight:600;">
+                            Удалить
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
+        {% empty %}
+            <p style="color:var(--color-text-muted);">Курсов пока нет.</p>
+        {% endfor %}
     </div>
-</div>
-
-
-
-    </div>
-    {% empty %}
-        <p>Курсов пока нет.</p>
-    {% endfor %}
 </section>
 
-</body>
-</html>
+{% endblock %}

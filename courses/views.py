@@ -9,6 +9,10 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Course, Stream, Lesson, Enrollment, LessonProgress
 
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
+
 
 class StaffRequiredMixin(UserPassesTestMixin):
     """Доступ только для staff"""
@@ -167,3 +171,36 @@ def mark_lesson_complete(request, course_pk, lesson_pk):
         progress.save()
 
     return redirect('courses:lesson_detail', course_pk=course_pk, lesson_pk=lesson_pk)
+
+
+@login_required
+@login_required
+def payment_page(request, stream_pk):
+    stream = get_object_or_404(Stream, pk=stream_pk)
+
+    try:
+        send_payment_notification(request.user, stream)
+        print('✅ Письмо отправлено!')
+    except Exception as e:
+        print(f'❌ Ошибка: {e}')
+
+    return render(request, 'courses/payment.html', {
+        'stream': stream,
+        'course': stream.course,
+    })
+def send_payment_notification(user, stream):
+    """Отправляет письмо пользователю после оплаты"""
+    subject = f'Заявка на курс "{stream.course.title}" принята'
+    message = render_to_string('courses/email_payment.html', {
+        'user': user,
+        'stream': stream,
+        'course': stream.course,
+    })
+    send_mail(
+        subject=subject,
+        message='',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        html_message=message,
+        fail_silently=False,
+    )

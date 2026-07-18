@@ -55,16 +55,16 @@
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-                <div style="display:flex; gap:8px; align-items:center;">
-                    <a href="{% url 'courses:course_detail' course.pk %}" class="enroll-btn" style="padding:10px 20px; font-size:14px;">
-                        Подробнее
-                    </a>
-                    {% if user.is_staff %}
-                        <a href="{% url 'courses:courses_update' course.pk %}" style="font-size:13px; color:var(--color-text-muted);">Редактировать</a>
-                        <a href="{% url 'courses:courses_delete' course.pk %}" style="font-size:13px; color:#c0756e;">Удалить</a>
-                    {% endif %}
-                </div>
-            </div>
+                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <a href="{% url 'courses:course_detail' course.pk %}" class="enroll-btn" style="padding:10px 20px; font-size:14px;">
+                Подробнее
+            </a>
+            {% if user.is_staff %}
+                <a href="{% url 'courses:courses_update' course.pk %}" style="font-size:13px; color:var(--color-text-muted);">Редактировать</a>
+                <a href="{% url 'courses:courses_delete' course.pk %}" style="font-size:13px; color:#c0756e;">Удалить</a>
+            {% endif %}
+        </div>
+                    </div>
         </div>
         {% empty %}
             <p style="text-align:center; color:var(--color-text-muted);">Курсы скоро появятся.</p>
@@ -72,16 +72,25 @@
     </div>
 </section>
 
+
+
 <!-- Видео -->
 <section style="margin:60px auto; max-width:900px; padding: 0 20px;">
     <h2 style="text-align:center; color:var(--color-primary); margin-bottom:24px;">Попробуй тренировку прямо сейчас</h2>
-    <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:16px; background:var(--color-primary);">
-        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="Видеотренировка"
-            frameborder="0"
-            allowfullscreen
-            style="position:absolute; top:0; left:0; width:100%; height:100%;">
-        </iframe>
+    <div style="position:relative; border-radius:16px; overflow:hidden; background:var(--color-primary);">
+        <!-- Превью видео -->
+        <img src="https://img.youtube.com/vi/LnsC1aDuJOM/maxresdefault.jpg"
+             alt="Превью тренировки"
+             style="width:100%; display:block; opacity:0.8;">
+        <!-- Кнопка play -->
+        <a href="https://youtu.be/LnsC1aDuJOM" target="_blank"
+           style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+                  background:var(--color-accent-rose); color:var(--color-primary);
+                  padding:16px 32px; border-radius:30px; font-weight:700; font-size:1rem;
+                  text-decoration:none; display:flex; align-items:center; gap:10px;
+                  box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            ▶ Смотреть тренировку
+        </a>
     </div>
 </section>
 
